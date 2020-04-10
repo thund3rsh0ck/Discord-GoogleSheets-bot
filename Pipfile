@@ -5,12 +5,13 @@ verify_ssl = true
 
 [dev-packages]
 pylint = "*"
+autopep8 = "*"
 
 [packages]
-oauth2client = "*"
-requests = "*"
-discord = "*"
-gspread = "*"
+oauth2client = "~=4.1.3"
+requests = "~=2.23.0"
+gspread = "~=3.4.2"
+discord-py = "~=1.3.3"
 
 [requires]
 python_version = "3.8"

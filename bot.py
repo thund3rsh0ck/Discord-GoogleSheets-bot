@@ -1,13 +1,18 @@
 '''This is a bot that integrations google sheets with discord API. It was intended to track participation for a game called CATS for Android but could be used for anything'''
-import discord
+# Python Libraries
 import time
 import config
 from config import token, link, prefix, ownerid
+import datetime
+
+# Pipfile Libraries
+from oauth2client.service_account import ServiceAccountCredentials
+import gspread
 from discord.ext.commands import Bot
 import requests
-import gspread
-import datetime
-from oauth2client.service_account import ServiceAccountCredentials
+import discord
+
+
 
 # Global Variables
 global war_start_date
