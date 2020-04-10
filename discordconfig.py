@@ -1,10 +1,11 @@
 # rename this config.py
 
-token = '00000000000000000000000.00000000.000000000000000000' #Put Your bots token here
+# Put Your bots token here
+token = '00000000000000000000000.00000000.000000000000000000'
 
-prefix = '~' #put prefix here
+prefix = '~'  # put prefix here
 
-link = 'https://discordapp.com/oauth2/authorize?client_id=000000000000000000&scope=bot&permissions=0000000' #put bot invite link here
+# put bot invite link here
+link = 'https://discordapp.com/oauth2/authorize?client_id=000000000000000000&scope=bot&permissions=0000000'
 
-ownerid = '00000000000000000' #put your id here
-
+ownerid = '00000000000000000'  # put your id here

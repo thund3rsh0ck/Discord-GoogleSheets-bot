@@ -1,8 +1,6 @@
 '''This is a bot that integrations google sheets with discord API. It was intended to track participation for a game called CATS for Android but could be used for anything'''
 # Python Libraries
 import time
-import config
-from config import token, link, prefix, ownerid
 import datetime
 
 # Pipfile Libraries
@@ -12,11 +10,14 @@ from discord.ext.commands import Bot
 import requests
 import discord
 
+# Local Files
+import config
+from config import token, link, prefix, ownerid
 
 
 # Global Variables
 global war_start_date
-war_start_date=str(datetime.datetime.today().strftime('%m/%d/%Y'))
+war_start_date = str(datetime.datetime.today().strftime('%m/%d/%Y'))
 
 client = Bot(prefix)
 
@@ -28,12 +29,10 @@ for i in range(500):
 			async def on_ready():
 				print("----------------------")
 				print("Logged In As")
-				print("Username: %s"%client.user.name)
-				print("ID: %s"%client.user.id)
+				print("Username: %s" % client.user.name)
+				print("ID: %s" % client.user.id)
 				print("----------------------")
 
-
-				
 			@client.command()
 			async def ping():
 				'''See if The Bot is Working'''
@@ -41,7 +40,7 @@ for i in range(500):
 				pingms = await client.say("Pinging...")
 				ping = time.time() - pingtime
 				await client.edit_message(pingms, ":ping_pong:  time is `%.01f seconds`" % ping)
-				
+
 			@client.command()
 			async def participation():
 				'''Shows participation stats for all players in current war'''
@@ -158,16 +157,16 @@ for i in range(500):
 					else:
 						notparticipatedlist += (str(makememberlistcounter)+'. '+cell_list[makememberlistcounter]+" :x: "+"\n")
 					makememberlistcounter+=1
-				#validate input
+				# validate input
 				if (")" not in number) and ("+" not in number):
-					#if there are multiple numbers
+					# if there are multiple numbers
 					if ("," in number):
 						counter = 1
-						#catch first number
+						# catch first number
 						firstcommalocation=number.find(",")
-						#print (firstcommalocation)
+						# print (firstcommalocation)
 						firstindex=int(number[:int(firstcommalocation)])
-						#print (firstindex)
+						# print (firstindex)
 						playername=cell_list[firstindex]
 						if (str(participation_date[firstindex]) != str(war_start_date)):
 							worksheet = wks.worksheet("data")
@@ -179,7 +178,7 @@ for i in range(500):
 						else:
 							playername=cell_list[firstindex]
 							await client.say(':x: ERROR: '+playername+' has been already participated in the war starting on: '+war_start_date)
-						#run through all but last number
+						# run through all but last number
 						while counter<26:
 							if (","+str(counter)+",") in number:
 								playername=cell_list[int(counter)]
@@ -195,7 +194,7 @@ for i in range(500):
 									await client.say(':x: ERROR: '+playername+' has been already participated in the war starting on: '+war_start_date)
 							counter += 1
 
-						#catch last number
+						# catch last number
 						if number[len(number)-2:len(number)-1]==",":
 							playername=cell_list[int(number[len(number)-1:])]
 							if (str(participation_date[int(number[len(number)-1:])]) != str(war_start_date)):
@@ -210,9 +209,9 @@ for i in range(500):
 								await client.say(':x: ERROR: '+playername+' has been already participated in the war starting on: '+war_start_date)
 						elif number[len(number)-3:len(number)-2]==",":
 							playernumber = int(number[len(number)-2:])
-							#print (playernumber)
+							# print (playernumber)
 							playername=cell_list[playernumber]
-							#print (playername)
+							# print (playername)
 							if (str(participation_date[playernumber]) != str(war_start_date)):
 								worksheet = wks.worksheet("data")
 								datacell_list = worksheet.col_values(1)
