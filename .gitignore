@@ -1,6 +1,6 @@
 # Local Project Files
 credentials.json
-config.py
+discordconfig.yaml
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
