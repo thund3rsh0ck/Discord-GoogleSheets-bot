@@ -11,14 +11,14 @@ This goes over getting the files for Google Sheet and Discord, and setting up so
 
 3. To get your bots invite link go here https://discordapi.com/permissions.html
 
-4. Get the client ID from the Discord Config file, and enter it into the Client ID field. Select what permissions you want(For this bot, Read and Send messages are the two you'll need.)
+4. Go to the link provided, and add the bot to the right server.
 
-### Setting up Google Sheets API
+### up Google Sheets API
 
 Google Developers Platform: https://developers.google.com/sheets/api
 
-1. Go to the Python page for Google Sheets API(https://developers.google.com/sheets/api/quickstart/python)
+1. This project uses pygsheets for Google Sheets, so follow the steps on the website. This application uses Oauth for the project
+ 
+2. Follow the guide: https://pygsheets.readthedocs.io/en/stable/authorization.html
 
-2. Hit Enable Google Sheet API and select Desktop App. It should load for a couple seconds, and then display a couple strings, and give you the option to download a credential.json file.
-
-3. After the credential.json file has been downloaded, drag the file into this git folder, at the top of this directory.
+3. When you have the OAuth file, put it in the project folder, and name it client_secret.json

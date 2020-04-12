@@ -10,7 +10,7 @@ autopep8 = "*"
 [packages]
 oauth2client = "*"
 requests = "~=2.23.0"
-gspread = "~=3.4.2"
+pygsheets = "~=1.1"
 pyyaml = "~=5.3.1"
 discord-py = "*"
 

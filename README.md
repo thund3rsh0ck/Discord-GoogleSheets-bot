@@ -18,6 +18,10 @@ Then Open Up The File Named ReadMe.txt
 
 Look at the Setup.md file, as that will be updated to assist in the setup for this project
 
+# Running
+
+Make sure the 'run_sever.sh' file is excuteable, and run it, and the bot should turn on. 
+
 # Issues
 
 1. Open up an Issue
