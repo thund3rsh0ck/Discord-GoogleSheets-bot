@@ -110,7 +110,7 @@ def userTzUpdater(user, timezone):
         tzmessage1 = "Your time zone has been added"
         return tzmessage1
     elif checkResponse is not timezone:
-        worksheetAllValues.remove('{}'.format(user))
+        print(worksheetAllValues)
         latestRowNumb  = rowNumbs +1 # this creates the next cell number available for usage.
         gsUserTimezones.update_row(latestRowNumb, the_stuff) # this puts the information provided by the user, in the right cell
         gsUserTimezones.add_rows(1) # This adds 1 more row, to make sure we dont run out of rows for information. 
