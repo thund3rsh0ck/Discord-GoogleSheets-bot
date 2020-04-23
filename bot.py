@@ -11,6 +11,8 @@ import pygsheets
 import requests
 import discord
 import yaml
+import pandas as pd
+import pytz
 
 from typing import Mapping, Any
 
@@ -35,6 +37,8 @@ with open(google_file, mode="r") as sheetsfile:
 gsClient = None  # google sheets client
 gsSalesWorksheet = None  # google sheets worksheet that corresponds to the selling price table
 gsPurchaseWorksheet = None # google sheet worksheet that corresponds to the purchasing price table
+gsUserTimezones = None # google sheet that corresponds to discord users Pytz timezone data
+
 
 # create bot
 bot = commands.Bot(command_prefix=prefix, pm_help=None,
@@ -46,12 +50,14 @@ def sheets_authorize():
     global gsClient
     global gsSalesWorksheet
     global gsPurchaseWorksheet
+    global gsUserTimezones
     # only works if your OAUTH credentials are stored in a file named
     # 'client_secret.json' in this directory
     gsClient = pygsheets.authorize()
     spreadsheet = gsClient.open_by_key(sheetsConfig["spreadsheetId"])
     gsSalesWorksheet = spreadsheet.worksheet("title", sheetsConfig["salesName"])
     gsPurchaseWorksheet = spreadsheet.worksheet("title", sheetsConfig["purchaseName"])
+    gsUserTimezones = spreadsheet.worksheet("title", sheetsConfig["timezone"])
 
 
 def sales_sheets_handling(user, price, timezone, theEpoch):
@@ -74,8 +80,6 @@ def purchase_sheets_handling(user, price, timezone, theEpoch):
     gsPurchaseWorksheet.update_row(latestRowNumb, the_stuff) # this puts the information provided by the user, in the right cell
     gsPurchaseWorksheet.add_rows(1) # This adds 1 more row, to make sure we dont run out of rows for information. 
 
-
-
 def has_admin_privilege():
     """Check that returns true if user has admin permissions"""
     async def predicate(ctx):
@@ -83,6 +87,38 @@ def has_admin_privilege():
                       ctx.author.permissions_in(ctx.channel).administrator)
     return commands.check(predicate)
 
+def userTzCheck(user):
+    """This function will check if the user has a timezone set or not. If they have a TZ, it will return the Pytz timezone, if not, it'll return false"""
+    timeWorksheetValues = gsUserTimezones.get_all_values()
+    user_tz = None
+    for i in timeWorksheetValues:
+        if user == i[0]:
+            user_tz = i[1]
+    if user_tz == None:
+        user_tz = False
+    return user_tz
+
+def userTzUpdater(user, timezone):
+    checkResponse = userTzCheck(user)
+    the_stuff = [user, timezone]
+    worksheetAllValues = gsUserTimezones.get_all_values()  # this gets all the cells in the Worksheet
+    rowNumbs = len(worksheetAllValues) # this checks for all the elements in the list, since each row is a set of elements within the main list
+    if checkResponse == False:
+        latestRowNumb  = rowNumbs +1 # this creates the next cell number available for usage.
+        gsUserTimezones.update_row(latestRowNumb, the_stuff) # this puts the information provided by the user, in the right cell
+        gsUserTimezones.add_rows(1) # This adds 1 more row, to make sure we dont run out of rows for information. 
+        tzmessage1 = "Your time zone has been added"
+        return tzmessage1
+    elif checkResponse is not timezone:
+        worksheetAllValues.remove('{}'.format(user))
+        latestRowNumb  = rowNumbs +1 # this creates the next cell number available for usage.
+        gsUserTimezones.update_row(latestRowNumb, the_stuff) # this puts the information provided by the user, in the right cell
+        gsUserTimezones.add_rows(1) # This adds 1 more row, to make sure we dont run out of rows for information. 
+        tzmessage2 = "Your Timezone has been updated"
+        return tzmessage2
+    elif checkResponse == timezone:
+        tzmessage3 = "Your timezone is up to date"
+        return tzmessage3
 
 @bot.command()
 @has_admin_privilege()
@@ -97,17 +133,35 @@ async def reboot(ctx):
 async def on_ready():
     os.system("echo Logged in as {0.user}".format(bot))
 
+@bot.command()
+async def tzcheck(ctx): 
+    await ctx.send("Checking person")
+    username = ctx.author.name
+    userdiscrim = ctx.author.discriminator
+    user = username + "#" + userdiscrim
+    tz_stuff = userTzCheck(user)
+    await ctx.send(tz_stuff)
 
 @bot.command()
-async def sell_price(ctx, price: int, timezone: str):
-    """'!price {$} {timezone}' with both being a number"""
+async def tzupdate(ctx, timezone: str):
+    """This command checks and updates the timezone."""
+    username = ctx.author.name
+    userdiscrim = ctx.author.discriminator
+    user = username + "#" + userdiscrim
+    tzupdate = userTzUpdater(user, timezone)
+    await ctx.send(tzupdate)
+
+
+@bot.command()
+async def sell(ctx, price: int, timezone: str):
+    """'!sell {$} {timezone}' with both being a number"""
     theEpoch = time.time()
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
     user = username + "#" + userdiscrim
     await ctx.send("Logging {}, in this timezone: {}".format(price, timezone))
     os.system(
-        "echo Priced Logged. User: {}, Price: {}, timezone: {}, epochtime: {}".format(
+        "echo Sales price Logged. User: {}, Price: {}, timezone: {}, epochtime: {}".format(
             user,
             price,
             timezone,
@@ -115,15 +169,15 @@ async def sell_price(ctx, price: int, timezone: str):
     sales_sheets_handling(user, price, timezone, theEpoch)
 
 @bot.command()
-async def buy_price(ctx, price: int, timezone: str):
-    """'!buy_price {$} {timezone}' with both being a number"""
+async def buy(ctx, price: int, timezone: str):
+    """'!buy {$} {timezone}' with both being a number"""
     theEpoch = time.time()
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
     user = username + "#" + userdiscrim
     await ctx.send("Logging {}, in this timezone: {}".format(price, timezone))
     os.system(
-        "echo Priced Logged. User: {}, Price: {}, timezone: {}, epochtime: {}".format(
+        "echo Purchase price Logged. User: {}, Price: {}, timezone: {}, epochtime: {}".format(
             user,
             price,
             timezone,
