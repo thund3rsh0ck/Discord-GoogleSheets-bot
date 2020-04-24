@@ -68,9 +68,6 @@ def epochToTime(usertimezone, theEpoch):
     # convert it to tz
     tz = pytz.timezone(usertimezone)
     dt = utc_dt.astimezone(tz)
-    print(utc_dt)
-    print(tz)
-    print(dt)
 
     # print it
     shiftedTime = dt.strftime('%Y-%m-%d %H:%M:%S')
@@ -81,12 +78,11 @@ def sales_sheets_handling(user, price, theEpoch):
     usertimezoneCheck = userTzCheck(user)
     usertimezone = None
     if usertimezoneCheck == False:
-        usertimezone = "Etc/GMT+0"
+        usertimezone = "UTC"
     else:
         usertimezone = usertimezoneCheck
     correctedTime  = epochToTime(usertimezone, theEpoch)
-    print(correctedTime)
-    the_stuff = [user, price, usertimezone, theEpoch]
+    the_stuff = [user, price, correctedTime, theEpoch, usertimezone]
     gsSalesWorksheet.link(syncToCloud=True)
     worksheetAllValues = gsSalesWorksheet.get_all_values()  # this gets all the cells in the Worksheet
     rowNumbs = len(worksheetAllValues) # this checks for all the elements in the list, since each row is a set of elements within the main list
@@ -99,10 +95,11 @@ def purchase_sheets_handling(user, price, theEpoch):
     usertimezoneCheck = userTzCheck(user)
     usertimezone = None
     if usertimezoneCheck == False:
-        usertimezone = "Etc/GMT+0"
+        usertimezone = "UTC"
     else:
         usertimezone = usertimezoneCheck
-    the_stuff = [user, price, usertimezone, theEpoch]
+    correctedTime  = epochToTime(usertimezone, theEpoch)
+    the_stuff = [user, price, correctedTime, theEpoch, usertimezone]
     gsPurchaseWorksheet.link(syncToCloud=True)
     worksheetAllValues = gsPurchaseWorksheet.get_all_values()  # this gets all the cells in the Worksheet
     rowNumbs = len(worksheetAllValues) # this checks for all the elements in the list, since each row is a set of elements within the main list
@@ -185,8 +182,6 @@ async def tzlist(ctx):
     await ctx.send(tzlist5content)
     await ctx.send(tzlist6content)
     await ctx.send(tzlist7content)
-
-
 
 
 @bot.command()
