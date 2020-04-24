@@ -60,9 +60,33 @@ def sheets_authorize():
     gsUserTimezones = spreadsheet.worksheet("title", sheetsConfig["timezone"])
 
 
-def sales_sheets_handling(user, price, timezone, theEpoch):
+def epochToTime(usertimezone, theEpoch):
+    """This Function converts the Epoch based timestamp, and converts it to a datetime string"""
+    # get time in UTC
+    utc_dt = datetime.datetime.utcfromtimestamp(theEpoch).replace(tzinfo=pytz.utc)
+
+    # convert it to tz
+    tz = pytz.timezone(usertimezone)
+    dt = utc_dt.astimezone(tz)
+    print(utc_dt)
+    print(tz)
+    print(dt)
+
+    # print it
+    shiftedTime = dt.strftime('%Y-%m-%d %H:%M:%S')
+    return shiftedTime
+
+def sales_sheets_handling(user, price, theEpoch):
     """This function handles selling price data being added to the spreadsheet and pushing the spreadsheet"""
-    the_stuff = [user, price, timezone, theEpoch]
+    usertimezoneCheck = userTzCheck(user)
+    usertimezone = None
+    if usertimezoneCheck == False:
+        usertimezone = "Etc/GMT+0"
+    else:
+        usertimezone = usertimezoneCheck
+    correctedTime  = epochToTime(usertimezone, theEpoch)
+    print(correctedTime)
+    the_stuff = [user, price, usertimezone, theEpoch]
     gsSalesWorksheet.link(syncToCloud=True)
     worksheetAllValues = gsSalesWorksheet.get_all_values()  # this gets all the cells in the Worksheet
     rowNumbs = len(worksheetAllValues) # this checks for all the elements in the list, since each row is a set of elements within the main list
@@ -70,9 +94,15 @@ def sales_sheets_handling(user, price, timezone, theEpoch):
     gsSalesWorksheet.update_row(latestRowNumb, the_stuff) # this puts the information provided by the user, in the right cell
     gsSalesWorksheet.add_rows(1) # This adds 1 more row, to make sure we dont run out of rows for information. 
 
-def purchase_sheets_handling(user, price, timezone, theEpoch):
+def purchase_sheets_handling(user, price, theEpoch):
     """This function handles buying price data being added to the spreadsheet and pushing the spreadsheet"""
-    the_stuff = [user, price, timezone, theEpoch]
+    usertimezoneCheck = userTzCheck(user)
+    usertimezone = None
+    if usertimezoneCheck == False:
+        usertimezone = "Etc/GMT+0"
+    else:
+        usertimezone = usertimezoneCheck
+    the_stuff = [user, price, usertimezone, theEpoch]
     gsPurchaseWorksheet.link(syncToCloud=True)
     worksheetAllValues = gsPurchaseWorksheet.get_all_values()  # this gets all the cells in the Worksheet
     rowNumbs = len(worksheetAllValues) # this checks for all the elements in the list, since each row is a set of elements within the main list
@@ -98,9 +128,9 @@ def userTzCheck(user):
         user_tz = False
     return user_tz
 
-def userTzUpdater(user, timezone):
+def userTzUpdater(user, usertimezone):
     checkResponse = userTzCheck(user)
-    the_stuff = [user, timezone]
+    the_stuff = [user, usertimezone]
     worksheetAllValues = gsUserTimezones.get_all_values()  # this gets all the cells in the Worksheet
     rowNumbs = len(worksheetAllValues) # this checks for all the elements in the list, since each row is a set of elements within the main list
     if checkResponse == False:
@@ -109,16 +139,13 @@ def userTzUpdater(user, timezone):
         gsUserTimezones.add_rows(1) # This adds 1 more row, to make sure we dont run out of rows for information. 
         tzmessage1 = "Your time zone has been added"
         return tzmessage1
-    elif checkResponse is not timezone:
-        print(worksheetAllValues)
-        latestRowNumb  = rowNumbs +1 # this creates the next cell number available for usage.
-        gsUserTimezones.update_row(latestRowNumb, the_stuff) # this puts the information provided by the user, in the right cell
-        gsUserTimezones.add_rows(1) # This adds 1 more row, to make sure we dont run out of rows for information. 
-        tzmessage2 = "Your Timezone has been updated"
+    elif checkResponse is not usertimezone: # this will eventually find and replace a User's timezone, however i was having issues with it. if it needs to be changed i will have to do it manually, not fun, but on a small scale it should be fine. This will need a fair bit of documentation reading.
+        tzmessage2 = "the usertimezone update feature is being worked on. If you would like your user timezone updated currently, please contact ethanbreck#3465, or if you know python, please help develop this feature."
         return tzmessage2
-    elif checkResponse == timezone:
-        tzmessage3 = "Your timezone is up to date"
+    elif checkResponse == usertimezone: # this one just verifies that the timezone that the user wants to set is already set, and they dont need to change a thing. 
+        tzmessage3 = "Your user timezone is up to date"
         return tzmessage3
+
 
 @bot.command()
 @has_admin_privilege()
@@ -134,55 +161,88 @@ async def on_ready():
     os.system("echo Logged in as {0.user}".format(bot))
 
 @bot.command()
-async def tzcheck(ctx): 
+@has_admin_privilege()
+async def tzlist(ctx):
+    """This function lists current accepted timezones"""
+    with open("timezones/timezone0.txt", mode="r") as tzlist1:
+        tzlist1content = tzlist1.read()
+    with open("timezones/timezone1.txt", mode="r") as tzlist2:
+        tzlist2content = tzlist2.read()
+    with open("timezones/timezone2.txt", mode="r") as tzlist3:
+        tzlist3content = tzlist3.read()
+    with open("timezones/timezone3.txt", mode="r") as tzlist4:
+        tzlist4content = tzlist4.read()
+    with open("timezones/timezone4.txt", mode="r") as tzlist5:
+        tzlist5content = tzlist5.read()
+    with open("timezones/timezone5.txt", mode="r") as tzlist6:
+        tzlist6content = tzlist6.read()
+    with open("timezones/timezone6.txt", mode="r") as tzlist7:
+        tzlist7content = tzlist7.read()
+    await ctx.send(tzlist1content)
+    await ctx.send(tzlist2content)
+    await ctx.send(tzlist3content)
+    await ctx.send(tzlist4content)
+    await ctx.send(tzlist5content)
+    await ctx.send(tzlist6content)
+    await ctx.send(tzlist7content)
+
+
+
+
+@bot.command()
+async def tzcheck(ctx):
+    """This function checks and lists your timezone""" 
     await ctx.send("Checking person")
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
     user = username + "#" + userdiscrim
     tz_stuff = userTzCheck(user)
-    await ctx.send(tz_stuff)
+    user_usertimezone = None
+    if tz_stuff == False:
+        user_usertimezone = "No user timezone Set"
+    else:
+        user_usertimezone = tz_stuff
+    await ctx.send("Your Current user timezone: " + user_usertimezone)
 
 @bot.command()
-async def tzupdate(ctx, timezone: str):
-    """This command checks and updates the timezone."""
+async def tzupdate(ctx, usertimezone: str):
+    """This command checks and updates the user timezone."""
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
     user = username + "#" + userdiscrim
-    tzupdate = userTzUpdater(user, timezone)
+    tzupdate = userTzUpdater(user, usertimezone)
     await ctx.send(tzupdate)
 
 
 @bot.command()
-async def sell(ctx, price: int, timezone: str):
-    """'!sell {$} {timezone}' with both being a number"""
+async def sell(ctx, price: int):
+    """'!sell {$} the $ being a number"""
     theEpoch = time.time()
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
     user = username + "#" + userdiscrim
-    await ctx.send("Logging {}, in this timezone: {}".format(price, timezone))
+    await ctx.send("Logging {}".format(price))
     os.system(
-        "echo Sales price Logged. User: {}, Price: {}, timezone: {}, epochtime: {}".format(
+        "echo Sales price Logged. User: {}, Price: {}, epochtime: {}".format(
             user,
             price,
-            timezone,
             theEpoch))
-    sales_sheets_handling(user, price, timezone, theEpoch)
+    sales_sheets_handling(user, price, theEpoch)
 
 @bot.command()
-async def buy(ctx, price: int, timezone: str):
-    """'!buy {$} {timezone}' with both being a number"""
+async def buy(ctx, price: int):
+    """'!buy {$} with the $ being a number"""
     theEpoch = time.time()
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
     user = username + "#" + userdiscrim
-    await ctx.send("Logging {}, in this timezone: {}".format(price, timezone))
+    await ctx.send("Logging {}".format(price))
     os.system(
-        "echo Purchase price Logged. User: {}, Price: {}, timezone: {}, epochtime: {}".format(
+        "echo Purchase price Logged. User: {}, Price: {}, epochtime: {}".format(
             user,
             price,
-            timezone,
             theEpoch))
-    purchase_sheets_handling(user, price, timezone, theEpoch)
+    purchase_sheets_handling(user, price, theEpoch)
 
 
 
