@@ -22,6 +22,8 @@ Then Open Up The File Named setup.md
 
 Look at the Setup.md file, as that will be updated to assist in the setup for this project
 
+change config.yaml.git to config.yaml, and add your config stuff to it.
+
 # Running
 
 Make sure the 'run_sever.sh' file is excuteable, and run it, and the bot should turn on. 

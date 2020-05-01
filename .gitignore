@@ -1,7 +1,9 @@
 # Local Project Files
 *.yaml
 *.json
-
+root@*
+.vscode
+workspace*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
