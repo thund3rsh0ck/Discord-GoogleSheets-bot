@@ -131,12 +131,10 @@ def salesSheetValues():
     return worksheetAllValues
 
 
-
 def priceCheck(theEpoch):
-    
     salesWorksheet = salesSheetValues()
-    print(salesWorksheet)
-
+    for i in salesWorksheet:
+        print(i)
 
 
 def has_admin_privilege():
@@ -243,10 +241,11 @@ async def tzupdate(ctx, usertimezone: str):
 
 
 @bot.command()
-async def salesSheet(ctx):
-    """This outputs the current sales sheet"""
+async def salesSpreadsheet(ctx):
+    """This outputs the current sales spreadsheet"""
     salesValues = salesSheetValues()
-    await ctx.send(salesValues)
+    sheetURL = "https://docs.google.com/spreadsheets/d/1OQvZv-LtUy7C2K6yip6u5tij4J0dP8sXdV23Cj6F2vY/edit?usp=sharing"
+    await ctx.send(sheetURL)
 
 @bot.command()
 async def sell(ctx, price: int):
@@ -304,4 +303,3 @@ async def on_command_error(ctx, error):
 if __name__ == "__main__":
     sheets_authorize()
     bot.run(token, bot=True, reconnect=True)
-    print(salesSheetValues())
