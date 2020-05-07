@@ -185,7 +185,7 @@ def userTzUpdater(user, usertimezone):
 
 
 def errorReporting(errorReport):
-
+    pass
 
 
 @bot.event
