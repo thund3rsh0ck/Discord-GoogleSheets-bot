@@ -185,10 +185,11 @@ def userTzUpdater(user, usertimezone):
 
 
 def errorReporting(errorReport):
+    updatedReport = errorReport
     worksheetAllValues = gsNetworkErrors.get_all_values()
     rowNumbs = len(worksheetAllValues)
     latestRowNumb = rowNumbs + 1
-    gsNetworkErrors.update_row(errorReport)
+    gsNetworkErrors.update_row(updatedReport)
     gsNetworkErrors.add_rows(1)
 
 
