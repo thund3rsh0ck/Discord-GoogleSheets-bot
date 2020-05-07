@@ -185,7 +185,15 @@ def userTzUpdater(user, usertimezone):
 
 
 def errorReporting(errorReport):
+<<<<<<< Updated upstream
+<<<<<<< Updated upstream
     pass
+=======
+    
+>>>>>>> Stashed changes
+=======
+    
+>>>>>>> Stashed changes
 
 
 @bot.event
@@ -246,7 +254,7 @@ async def buffering(ctx):
     currentTime = epochToTime("UTC", theEpoch)
     theReport = (user, currentTime, "Buffering")
     errorReporting(theReport)
-    
+    await ctx.send(theReport)
 
 @bot.command()
 async def los(ctx):
@@ -258,6 +266,8 @@ async def los(ctx):
     currentTime = epochToTime("UTC", theEpoch)
     theReport = (user, currentTime, "Signal Lost")
     errorReporting(theReport)
+    await ctx.send(theReport)
+
 
 
 @bot.command()
