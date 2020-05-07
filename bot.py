@@ -288,15 +288,13 @@ async def tzupdate(ctx, usertimezone: str):
 @bot.command()
 async def openthepodbaydoors(ctx):
     username = ctx.author.name
-    userdiscrim = ctx.author.discriminator
-    user = username + "#" + userdiscrim
+    user = username
     await ctx.send("Im sorry {}, Im afraid I can't do that".format(user))
 
 @bot.command()
 async def whydoesthisexist(ctx):
     username = ctx.author.name
-    userdiscrim = ctx.author.discriminator
-    user = username + "#" + userdiscrim
+    user = username
     await ctx.send("I dont know {}, why do any of us exist?".format(user))
 
 @bot.command()
@@ -350,11 +348,14 @@ async def reboot(ctx):
 @bot.event
 async def on_command_error(ctx, error):
 
+    username = ctx.author.name
+    user = username
+
     if isinstance(error, commands.CommandNotFound):
         # get message text
         return await ctx.send("Unknown command. Type {}help for help.".format(prefix))
     elif isinstance(error, commands.CheckFailure):
-        return await ctx.send("You are not allowed to run this command.")
+        return await ctx.send("I'm sorry {} I can't do that".format(user))
     else:
         raise error
 
