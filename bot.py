@@ -185,15 +185,12 @@ def userTzUpdater(user, usertimezone):
 
 
 def errorReporting(errorReport):
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    pass
-=======
-    
->>>>>>> Stashed changes
-=======
-    
->>>>>>> Stashed changes
+    worksheetAllValues = gsUserTimezones.get_all_values()
+    rowNumbs = len(worksheetAllValues)
+    latestRowNumb = rowNumbs + 1
+    gsUserTimezones.update_row(errorReport)
+    gsUserTimezones.add_rows(1)
+
 
 
 @bot.event
