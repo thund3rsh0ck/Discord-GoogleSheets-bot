@@ -41,7 +41,8 @@ gsSalesWorksheet = None
 gsPurchaseWorksheet = None
 # google sheet that corresponds to discord users Pytz timezone data
 gsUserTimezones = None
-
+# google sheets that corresponds to error reporting.
+gsNetworkErrors = None
 
 # create bot
 bot = commands.Bot(command_prefix=prefix, pm_help=None,
@@ -54,6 +55,7 @@ def sheets_authorize():
     global gsSalesWorksheet
     global gsPurchaseWorksheet
     global gsUserTimezones
+    global gsNetworkErrors
     # only works if your OAUTH credentials are stored in a file named
     # 'client_secret.json' in this directory
     gsClient = pygsheets.authorize()
@@ -63,7 +65,7 @@ def sheets_authorize():
     gsPurchaseWorksheet = spreadsheet.worksheet(
         "title", sheetsConfig["purchaseName"])
     gsUserTimezones = spreadsheet.worksheet("title", sheetsConfig["timezone"])
-
+    gsNetworkErrors = spreadsheet.worksheet("title", sheetsConfig["errors"])
 
 def epochToTime(usertimezone, theEpoch):
     """This Function converts the Epoch based timestamp, and converts it to a datetime string"""
@@ -182,6 +184,10 @@ def userTzUpdater(user, usertimezone):
         return tzmessage3
 
 
+def errorReporting(errorReport):
+
+
+
 @bot.event
 async def on_ready():
     os.system("echo Logged in as {0.user}".format(bot))
@@ -228,6 +234,30 @@ async def tzcheck(ctx):
     else:
         user_usertimezone = tz_stuff
     await ctx.send("Your Current user timezone: " + user_usertimezone)
+
+
+@bot.command()
+async def buffering(ctx):
+    """This tracks when the stream is buffering"""
+    username = ctx.author.name
+    userdiscrim = ctx.author.discriminator
+    user = username + "#" + userdiscrim
+    theEpoch = time.time()
+    currentTime = epochToTime("UTC", theEpoch)
+    theReport = (user, currentTime, "Buffering")
+    errorReporting(theReport)
+    
+
+@bot.command()
+async def los(ctx):
+    """This command tracks network errors and such"""
+    username = ctx.author.name
+    userdiscrim = ctx.author.discriminator
+    user = username + "#" + userdiscrim
+    theEpoch = time.time()
+    currentTime = epochToTime("UTC", theEpoch)
+    theReport = (user, currentTime, "Signal Lost")
+    errorReporting(theReport)
 
 
 @bot.command()
