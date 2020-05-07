@@ -187,9 +187,10 @@ def userTzUpdater(user, usertimezone):
 def errorReporting(errorReport):
     updatedReport = errorReport
     worksheetAllValues = gsNetworkErrors.get_all_values()
+    print(worksheetAllValues)
     rowNumbs = len(worksheetAllValues)
     latestRowNumb = rowNumbs + 1
-    gsNetworkErrors.update_row(updatedReport)
+    gsNetworkErrors.update_row(latestRowNumb, updatedReport)
     gsNetworkErrors.add_rows(1)
 
 
@@ -249,10 +250,10 @@ async def buffering(ctx):
     userdiscrim = ctx.author.discriminator
     user = username + "#" + userdiscrim
     theEpoch = time.time()
-    currentTime = epochToTime("UTC", theEpoch)
-    theReport = (user, currentTime, "Buffering")
-    errorReporting(theReport)
+    currentTime = epochToTime("America/Los_Angeles", theEpoch)
+    theReport = [user, currentTime, "Buffering"]
     await ctx.send(theReport)
+    errorReporting(theReport)
 
 @bot.command()
 async def los(ctx):
@@ -261,10 +262,12 @@ async def los(ctx):
     userdiscrim = ctx.author.discriminator
     user = username + "#" + userdiscrim
     theEpoch = time.time()
-    currentTime = epochToTime("UTC", theEpoch)
-    theReport = (user, currentTime, "Signal Lost")
-    errorReporting(theReport)
+    currentTime = epochToTime("America/Los_Angeles", theEpoch)
+    theReport = [user, currentTime, "Signal Lost"]
+    print(theReport)
     await ctx.send(theReport)
+    errorReporting(theReport)
+
 
 
 
