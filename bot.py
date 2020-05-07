@@ -268,12 +268,6 @@ async def los(ctx):
     await ctx.send(theReport)
     errorReporting(theReport)
 
-@bot.command()
-async def ethan(ctx):
-    username = ctx.author.name
-    userdiscrim = ctx.author.discriminator
-    user = username + "#" + userdiscrim
-    await ctx.send("That works I guess @{}".format(user))
 
 @bot.command()
 async def tzupdate(ctx, usertimezone: str):
@@ -284,15 +278,22 @@ async def tzupdate(ctx, usertimezone: str):
     tzupdate = userTzUpdater(user, usertimezone)
     await ctx.send(tzupdate)
 
+@bot.command()
+async def ethan(ctx):
+    username = ctx.author.name
+    userdiscrim = ctx.author.discriminator
+    user = username + "#" + userdiscrim
+    await ctx.send("That works I guess @{}".format(user))
+
 
 @bot.command()
-async def openthepodbaydoors(ctx):
+async def openThePodBayDoors(ctx):
     username = ctx.author.name
     user = username
     await ctx.send("Im sorry {}, Im afraid I can't do that".format(user))
 
 @bot.command()
-async def whydoesthisexist(ctx):
+async def whyDoesThisExist(ctx):
     username = ctx.author.name
     user = username
     await ctx.send("I dont know {}, why do any of us exist?".format(user))
