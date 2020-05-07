@@ -268,8 +268,12 @@ async def los(ctx):
     await ctx.send(theReport)
     errorReporting(theReport)
 
-
-
+@bot.command()
+async def ethan(ctx):
+    username = ctx.author.name
+    userdiscrim = ctx.author.discriminator
+    user = username + "#" + userdiscrim
+    await ctx.send("That works I guess @{}".format(user))
 
 @bot.command()
 async def tzupdate(ctx, usertimezone: str):
