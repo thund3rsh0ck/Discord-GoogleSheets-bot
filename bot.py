@@ -286,6 +286,20 @@ async def tzupdate(ctx, usertimezone: str):
 
 
 @bot.command()
+async def openthepodbaydoors(ctx):
+    username = ctx.author.name
+    userdiscrim = ctx.author.discriminator
+    user = username + "#" + userdiscrim
+    await ctx.send("Im sorry {}, Im afraid I can't do that".format(user))
+
+@bot.command()
+async def whydoesthisexist(ctx):
+    username = ctx.author.name
+    userdiscrim = ctx.author.discriminator
+    user = username + "#" + userdiscrim
+    await ctx.send("I dont know {}, why do any of us exist?".format(user))
+
+@bot.command()
 async def salesSpreadsheet(ctx):
     """This outputs the current sales spreadsheet"""
     salesValues = salesSheetValues()
