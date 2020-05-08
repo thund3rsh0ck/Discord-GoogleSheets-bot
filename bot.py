@@ -4,6 +4,7 @@ import time
 import os
 import sys
 import datetime
+import logging
 import json
 
 # Pipfile Libraries
@@ -44,6 +45,20 @@ gsUserTimezones = None
 # google sheets that corresponds to error reporting.
 gsNetworkErrors = None
 
+# Logging setup
+
+LOGLEVEL = os.environ.get("LOGLEVEL", "INFO").upper()
+logger = logging.getLogger(__name__)
+logger.setLevel(LOGLEVEL)
+fmt = logging.Formatter("%(asctime)s %(funcName)s %(levelname)s %(message)s")
+ch = logging.StreamHandler()
+fh = logging.FileHandler('thebot.log')
+ch.setFormatter(fmt)
+fh.setFormatter(fmt)
+logger.addHandler(fh)
+logger.addHandler(ch)
+
+
 # create bot
 bot = commands.Bot(command_prefix=prefix, pm_help=None,
                    case_insensitive=False)
@@ -59,6 +74,7 @@ def sheets_authorize():
     # only works if your OAUTH credentials are stored in a file named
     # 'client_secret.json' in this directory
     gsClient = pygsheets.authorize()
+    logger.debug("Google Sheets connection has been authorized")
     spreadsheet = gsClient.open_by_key(sheetsConfig["spreadsheetId"])
     gsSalesWorksheet = spreadsheet.worksheet(
         "title", sheetsConfig["salesName"])
@@ -134,6 +150,7 @@ def salesSheetValues():
 
 
 def priceCheck(theEpoch):
+    """This doesnt do anything yet"""
     salesWorksheet = salesSheetValues()
     for i in salesWorksheet:
         print(i)
@@ -280,6 +297,7 @@ async def tzupdate(ctx, usertimezone: str):
 
 @bot.command()
 async def ethan(ctx):
+    """The meme command that does nothing"""
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
     user = username + "#" + userdiscrim
@@ -288,12 +306,14 @@ async def ethan(ctx):
 
 @bot.command()
 async def openThePodBayDoors(ctx):
+    """This opens the Pod Bay Doors"""
     username = ctx.author.name
     user = username
     await ctx.send("Im sorry {}, Im afraid I can't do that".format(user))
 
 @bot.command()
 async def whyDoesThisExist(ctx):
+    """Asking the Real Questions"""
     username = ctx.author.name
     user = username
     await ctx.send("I dont know {}, why do any of us exist?".format(user))
