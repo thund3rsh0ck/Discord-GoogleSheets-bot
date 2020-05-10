@@ -291,7 +291,7 @@ async def tzupdate(ctx, usertimezone: str):
     """This command checks and updates the user timezone."""
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
-    user = username + "#" + userdiscrim
+    user = username
     tzupdate = userTzUpdater(user, usertimezone)
     await ctx.send(tzupdate)
 
@@ -300,7 +300,7 @@ async def ethan(ctx):
     """The meme command that does nothing"""
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
-    user = username + "#" + userdiscrim
+    user = username
     await ctx.send("That works I guess @{}".format(user))
 
 
