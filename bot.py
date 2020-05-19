@@ -259,6 +259,11 @@ async def tzcheck(ctx):
         user_usertimezone = tz_stuff
     await ctx.send("Your Current user timezone: " + user_usertimezone)
 
+@bot.command()
+async def yucca(ctx):
+    username = ctx.author.name
+    await ctx.send("Thats pretty Yucca {}".format(username))
+
 
 @bot.command()
 async def buffering(ctx):
@@ -291,7 +296,7 @@ async def tzupdate(ctx, usertimezone: str):
     """This command checks and updates the user timezone."""
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
-    user = username
+     user = username + "#" + userdiscrim
     tzupdate = userTzUpdater(user, usertimezone)
     await ctx.send(tzupdate)
 
@@ -300,7 +305,7 @@ async def ethan(ctx):
     """The meme command that does nothing"""
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
-    user = username
+    user = username + "#" + userdiscrim
     await ctx.send("That works I guess @{}".format(user))
 
 
@@ -331,7 +336,7 @@ async def sell(ctx, price: int):
     theEpoch = time.time()
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
-    user = username + "#" + userdiscrim
+    user = username
     await ctx.send("Logging {}".format(price))
     os.system(
         "echo Sales price Logged. User: {}, Price: {}, epochtime: {}".format(
@@ -347,7 +352,7 @@ async def buy(ctx, price: int):
     theEpoch = time.time()
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
-    user = username + "#" + userdiscrim
+    user = username
     await ctx.send("Logging {}".format(price))
     os.system(
         "echo Purchase price Logged. User: {}, Price: {}, epochtime: {}".format(
