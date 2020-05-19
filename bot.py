@@ -297,7 +297,7 @@ async def tzupdate(ctx, usertimezone: str):
     """This command checks and updates the user timezone."""
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
-     user = username + "#" + userdiscrim
+    user = username + "#" + userdiscrim
     tzupdate = userTzUpdater(user, usertimezone)
     await ctx.send(tzupdate)
 
