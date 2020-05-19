@@ -260,12 +260,6 @@ async def tzcheck(ctx):
     await ctx.send("Your Current user timezone: " + user_usertimezone)
 
 @bot.command()
-async def yucca(ctx):
-    username = ctx.author.name
-    await ctx.send("Thats pretty Yucca {}".format(username))
-
-
-@bot.command()
 async def buffering(ctx):
     """This tracks when the stream is buffering"""
     username = ctx.author.name
@@ -276,6 +270,13 @@ async def buffering(ctx):
     theReport = [user, currentTime, "Buffering"]
     await ctx.send(theReport)
     errorReporting(theReport)
+
+@bot.command()
+async def yucca(ctx):
+    username = ctx.author.name
+    await ctx.send("Thats pretty Yucca {}".format(username))
+
+
 
 @bot.command()
 async def los(ctx):
