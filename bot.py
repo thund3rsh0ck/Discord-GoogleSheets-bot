@@ -274,7 +274,7 @@ async def buffering(ctx):
 @bot.command()
 async def yucca(ctx):
     username = ctx.author.name
-    await ctx.send("Thats pretty Yucca {}".format(username))
+    await ctx.send("Thats pretty Yucca {}".format(ctx.author.mention))
 
 
 
@@ -307,7 +307,7 @@ async def ethan(ctx):
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
     user = username + "#" + userdiscrim
-    await ctx.send("That works I guess @{}".format(user))
+    await ctx.send("That works I guess @{}".format(ctx.author.mention))
 
 
 @bot.command()
@@ -315,14 +315,14 @@ async def openThePodBayDoors(ctx):
     """This opens the Pod Bay Doors"""
     username = ctx.author.name
     user = username
-    await ctx.send("Im sorry {}, Im afraid I can't do that".format(user))
+    await ctx.send("Im sorry {}, Im afraid I can't do that".format(ctx.author.mention))
 
 @bot.command()
 async def whyDoesThisExist(ctx):
     """Asking the Real Questions"""
     username = ctx.author.name
     user = username
-    await ctx.send("I dont know {}, why do any of us exist?".format(user))
+    await ctx.send("I dont know {}, why do any of us exist?".format(ctx.author.mention))
 
 @bot.command()
 async def salesSpreadsheet(ctx):
@@ -382,7 +382,7 @@ async def on_command_error(ctx, error):
         # get message text
         return await ctx.send("Unknown command. Type {}help for help.".format(prefix))
     elif isinstance(error, commands.CheckFailure):
-        return await ctx.send("I'm sorry {} I can't do that".format(user))
+        return await ctx.send("I'm sorry {} I can't do that".format(ctx.author.mention))
     else:
         raise error
 
