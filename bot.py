@@ -307,7 +307,7 @@ async def ethan(ctx):
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
     user = username + "#" + userdiscrim
-    await ctx.send("That works I guess @{}".format(ctx.author.mention))
+    await ctx.send("That works I guess {}".format(ctx.author.mention))
 
 
 @bot.command()
