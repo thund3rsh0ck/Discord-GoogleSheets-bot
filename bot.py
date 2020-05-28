@@ -177,7 +177,7 @@ def userTzCheck(user):
     user_tz = None
     for i in timeWorksheetValues:
         if user == i[0]:
-            user_tz = i[1]
+            user_tz = i
     if user_tz == None:
         user_tz = False
     return user_tz
