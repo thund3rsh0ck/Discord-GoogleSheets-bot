@@ -286,6 +286,16 @@ async def quote(ctx, quoteid: str = ""):
         await ctx.send("You didn't quote anything {}".format(ctx.message.author.mention))
 
 
+@bot.command(hidden=True)
+@commands.has_role("Twitch Mods")
+async def gettzids(ctx):
+    timeWorksheetValues = gsUserTimezones.get_all_values()
+    for i in range(len(timeWorksheetValues)):
+        userid = ctx.guild.get_member_named(timeWorksheetValues[i][0])
+        if userid:
+            await ctx.send(str(userid) + " " + str(userid.id))
+
+
 @bot.command(pass_context=True)
 @commands.has_role("Twitch Mods")
 async def quoterem(ctx, quoteid: str = ""):
@@ -308,12 +318,14 @@ async def quotes(ctx):
     """This list all the quotes"""
     quotes = read_quotes()
     message = ""
-    embed = discord.Embed(title="Quotes", description=" {}".format(ctx.message.author.mention), color=0x00ff00)
+    embed = discord.Embed(title="Quotes", description=" {}".format(
+        ctx.message.author.mention), color=0x00ff00)
     if len(quotes[0]) == 0:
         await ctx.send("There are no quotes yet {}".format(ctx.message.author.mention))
     else:
         for i in range(len(quotes)):
-            embed.add_field(name="Quote number: {}".format(i + 1), value=quotes[i][0], inline=False)
+            embed.add_field(name="Quote number: {}".format(
+                i + 1), value=quotes[i][0], inline=False)
         await ctx.send(embed=embed)
 
 
@@ -367,9 +379,9 @@ async def tzcheck(ctx, usertag: str = ""):
         else:
             user_usertimezone = tz_stuff[1]
             if usertag == "":
-                await ctx.send("Your Current user timezone: " + user_usertimezone)
+                await ctx.send("Your current user timezone: " + user_usertimezone)
             else:
-                await ctx.send(username + "'s' timezone is: " + user_usertimezone)
+                await ctx.send(username + "'s timezone is: " + user_usertimezone)
 
 
 @bot.command()
