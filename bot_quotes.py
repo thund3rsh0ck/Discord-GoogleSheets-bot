@@ -1,4 +1,4 @@
-'''This is a bot that integrations google sheets with discord API. This Version uses the very base of the Repo it's forked from, but diverges a lot to track and report turnip prices for Animal Crossing New Horizons (ACNH)'''
+'''This file was a test done by a developer working on this project, and is not meant to be used at all for bot usage. Use bot.py for the bot.'''
 # Python Libraries
 import time
 import os
