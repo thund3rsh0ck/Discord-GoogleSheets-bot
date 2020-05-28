@@ -262,6 +262,7 @@ async def on_ready():
 
 @bot.command(pass_context=True)
 async def quoteadd(ctx, quote: str = ""):
+    """This command adds quotes. Be sure to use quotation marks around quotes"""
     if quote != "":
         quoteid = write_quote(quote)
         await ctx.send("Quote added at position **{}**  {}".format(quoteid, ctx.message.author.mention))
@@ -271,6 +272,7 @@ async def quoteadd(ctx, quote: str = ""):
 
 @bot.command(pass_context=True)
 async def quote(ctx, quoteid: str = ""):
+    """This lists a specific quote. Enter a Number and it shall return a quote"""
     if quoteid == "0":
         await ctx.send("There is no quote in position **{}** {}".format(quoteid, ctx.message.author.mention))
     elif quoteid != "":
@@ -285,8 +287,9 @@ async def quote(ctx, quoteid: str = ""):
 
 
 @bot.command(pass_context=True)
-# @commands.has_role("Twitch Mods")
+@commands.has_role("Twitch Mods")
 async def quoterem(ctx, quoteid: str = ""):
+    """This removes quotes. Enter the quote number"""
     if quoteid == "0":
         await ctx.send("There is no quote in position **{}** {}".format(quoteid, ctx.message.author.mention))
     elif quoteid != "":
@@ -302,6 +305,7 @@ async def quoterem(ctx, quoteid: str = ""):
 
 @bot.command(pass_context=True)
 async def quotes(ctx):
+    """This list all the quotes"""
     quotes = read_quotes()
     message = ""
     embed = discord.Embed(title="Quotes", description=" {}".format(ctx.message.author.mention), color=0x00ff00)
