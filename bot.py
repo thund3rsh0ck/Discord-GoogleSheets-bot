@@ -274,7 +274,7 @@ async def quote(ctx, quoteid: str = ""):
 
 
 @bot.command(pass_context=True)
-@commands.has_role("Twitch Mod")
+@commands.has_role("Twitch Mods")
 async def quoterem(ctx, quoteid: str = ""):
     """This removes quotes. Enter the quote number"""
     if quoteid != "":
@@ -306,7 +306,7 @@ async def quotes(ctx):
 
 
 @bot.command()
-@commands.has_role("Twitch Mod")
+@commands.has_role("Twitch Mods")
 async def tzlist(ctx):
     """This function lists current accepted timezones"""
     with open("timezones/timezone0.txt", mode="r") as tzlist1:
@@ -450,7 +450,7 @@ async def buy(ctx, price: int):
 
 
 @bot.command()
-@commands.has_role("Twitch Mod")
+@commands.has_role("Twitch Mods")
 async def reboot(ctx):
     """Admins use this to reboot the bot"""
     await ctx.send("Rebooting!...")
