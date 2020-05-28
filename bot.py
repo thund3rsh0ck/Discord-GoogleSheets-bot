@@ -237,6 +237,8 @@ async def on_ready():
 
 @bot.command(pass_context=True)
 async def quoteadd(ctx, quote: str = ""):
+    """This command adds quotes. Be sure to use quotation marks around quotes"""
+
     if quote != "":
         with open("quotes.json", "r") as quote_read:
             quotes = json.load(quote_read)
@@ -255,6 +257,7 @@ async def quoteadd(ctx, quote: str = ""):
 
 @bot.command(pass_context=True)
 async def quote(ctx, quoteid: str = ""):
+    """This lists a specific quote. Enter a Number and it shall return a quote"""
     if quoteid != "":
         with open("quotes.json", "r") as quote_read:
             quotes = json.load(quote_read)
@@ -271,7 +274,9 @@ async def quote(ctx, quoteid: str = ""):
 
 
 @bot.command(pass_context=True)
+@commands.has_role("Twitch Mod")
 async def quoterem(ctx, quoteid: str = ""):
+    """This removes quotes. Enter the quote number"""
     if quoteid != "":
         with open("quotes.json", "r") as quote_read:
             quotes = json.load(quote_read)
@@ -288,6 +293,7 @@ async def quoterem(ctx, quoteid: str = ""):
 
 @bot.command(pass_context=True)
 async def quotes(ctx):
+    """This list all the quotes"""
     with open("quotes.json", "r") as quote_read:
         quotes = json.load(quote_read)
     message = ""
