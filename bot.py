@@ -206,6 +206,26 @@ def userTzUpdater(user, usertimezone):
         tzmessage3 = "Your user timezone is up to date"
         return tzmessage3
 
+def userTzPrivacyToggle(user):
+    # this gets all the cells in the Worksheet
+    the_stuff = None
+    timeWorksheetValues = gsUserTimezones.get_all_values()
+    user_row = None
+    for i in range(len(timeWorksheetValues)):
+        if user == timeWorksheetValues[i][0]:
+            user_row = i
+            the_stuff = timeWorksheetValues[i]
+    if user_row == None:
+        user_row = False
+    if user_row != False:
+        # this puts the information provided by the user, in the right cell
+        the_stuff[2] = "FALSE" if the_stuff[2] == "TRUE" else "TRUE"
+        gsUserTimezones.update_row(user_row+1, the_stuff)
+        # This adds 1 more row, to make sure we dont run out of rows for information.
+        return "Your timezone visibility has been set to " + ("visible" if the_stuff[2] == "TRUE" else "hidden")
+    else:
+        return "No timezone set yet"
+
 
 def read_quotes():
     allValues = gsQuotes.get_all_values()
@@ -271,6 +291,7 @@ async def quote(ctx, quoteid: str = ""):
 
 
 @bot.command(pass_context=True)
+@commands.has_role("Twitch Mods")
 async def quoterem(ctx, quoteid: str = ""):
     if quoteid != "":
         with open("quotes.json", "r") as quote_read:
@@ -300,7 +321,7 @@ async def quotes(ctx):
 
 
 @bot.command()
-@commands.has_role("Twitch Mod")
+@commands.has_role("Twitch Mods")
 async def tzlist(ctx):
     """This function lists current accepted timezones"""
     with open("timezones/timezone0.txt", mode="r") as tzlist1:
@@ -327,19 +348,42 @@ async def tzlist(ctx):
 
 
 @bot.command()
-async def tzcheck(ctx):
+async def tzcheck(ctx, usertag: str = ""):
     """This function checks and lists your timezone"""
     await ctx.send("Checking person")
+    if usertag != "":
+        tag = await bot.fetch_user(usertag[3:-1])
+        username = tag.name
+        userdiscrim = tag.discriminator
+        user = username + "#" + userdiscrim
+    else:
+        username = ctx.author.name
+        userdiscrim = ctx.author.discriminator
+        user = username + "#" + userdiscrim
+    tz_stuff = userTzCheck(user)
+    if usertag != "" and tz_stuff != False and tz_stuff[2] == "FALSE":
+        await ctx.send("This user has his timezone hidden")
+    else:
+        user_usertimezone = None
+        if tz_stuff == False:
+            await ctx.send("No user timezone Set")
+        else:
+            user_usertimezone = tz_stuff[1]
+            if usertag == "":
+                await ctx.send("Your Current user timezone: " + user_usertimezone)
+            else:
+                await ctx.send(username + "'s' timezone is: " + user_usertimezone)
+
+
+@bot.command()
+async def tztoggle(ctx):
+    """This command checks and updates the user timezone."""
     username = ctx.author.name
     userdiscrim = ctx.author.discriminator
     user = username + "#" + userdiscrim
-    tz_stuff = userTzCheck(user)
-    user_usertimezone = None
-    if tz_stuff == False:
-        user_usertimezone = "No user timezone Set"
-    else:
-        user_usertimezone = tz_stuff
-    await ctx.send("Your Current user timezone: " + user_usertimezone)
+    tzupdate = userTzPrivacyToggle(user)
+    await ctx.send(tzupdate)
+
 
 
 @bot.command()
@@ -444,7 +488,7 @@ async def buy(ctx, price: int):
 
 
 @bot.command()
-@commands.has_role("Twitch Mod")
+@commands.has_role("Twitch Mods")
 async def reboot(ctx):
     """Admins use this to reboot the bot"""
     await ctx.send("Rebooting!...")
