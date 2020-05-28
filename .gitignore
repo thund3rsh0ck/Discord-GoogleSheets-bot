@@ -1,7 +1,7 @@
 # Local Project Files
 *.yaml
-*.json
-root@*
+client_secret.json
+root*
 .vscode
 workspace*
 
