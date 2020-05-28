@@ -271,10 +271,7 @@ async def quote(ctx, quoteid: str = ""):
 
 
 @bot.command(pass_context=True)
-<<<<<<< HEAD
 @commands.has_role("Twitch Mods")
-=======
->>>>>>> parent of 8ed6f14... Adding descriptions and permission locks to commands
 async def quoterem(ctx, quoteid: str = ""):
     if quoteid != "":
         with open("quotes.json", "r") as quote_read:
