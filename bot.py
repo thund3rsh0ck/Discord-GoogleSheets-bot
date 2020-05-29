@@ -382,7 +382,7 @@ async def tzcheck(ctx, usertag: str = ""):
         username = ctx.author.display_name
     tz_stuff = userTzCheck(user)
     if usertag != "" and tz_stuff != False and tz_stuff[2] == "FALSE":
-        await ctx.send("This user has his timezone hidden")
+        await ctx.send("This user has their timezone hidden")
     else:
         user_usertimezone = None
         if tz_stuff == False:
