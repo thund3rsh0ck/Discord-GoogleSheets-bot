@@ -295,6 +295,19 @@ async def gettzids(ctx):
         if userid:
             await ctx.send(str(userid) + " " + str(userid.id))
 
+@bot.command(hidden=True)
+@commands.has_role("Twitch Mods")
+async def renametz(ctx):
+    timeWorksheetValues = gsUserTimezones.get_all_values()
+    for i in range(len(timeWorksheetValues)):
+        if i>0:
+            userid = ctx.guild.get_member(int(timeWorksheetValues[i][3]))
+            if userid:
+                the_stuff = timeWorksheetValues[i]
+                the_stuff[0] = userid.display_name
+                gsUserTimezones.update_row(i + 1, the_stuff)
+
+
 
 @bot.command(pass_context=True)
 @commands.has_role("Twitch Mods")
