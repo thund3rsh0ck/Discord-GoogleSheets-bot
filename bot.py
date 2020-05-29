@@ -176,16 +176,16 @@ def userTzCheck(user):
     timeWorksheetValues = gsUserTimezones.get_all_values()
     user_tz = None
     for i in timeWorksheetValues:
-        if user == i[0]:
+        if str(user) == i[3]:
             user_tz = i
     if user_tz == None:
         user_tz = False
     return user_tz
 
 
-def userTzUpdater(user, usertimezone):
+def userTzUpdater(user, usertimezone, userid):
     checkResponse = userTzCheck(user)
-    the_stuff = [user, usertimezone]
+    the_stuff = [user, usertimezone, True, str(userid)]
     # this gets all the cells in the Worksheet
     worksheetAllValues = gsUserTimezones.get_all_values()
     # this checks for all the elements in the list, since each row is a set of elements within the main list
@@ -214,7 +214,7 @@ def userTzPrivacyToggle(user):
     timeWorksheetValues = gsUserTimezones.get_all_values()
     user_row = None
     for i in range(len(timeWorksheetValues)):
-        if user == timeWorksheetValues[i][0]:
+        if str(user) == timeWorksheetValues[i][3]:
             user_row = i
             the_stuff = timeWorksheetValues[i]
     if user_row == None:
@@ -374,14 +374,12 @@ async def tzcheck(ctx, usertag: str = ""):
     """This function checks and lists your timezone"""
     await ctx.send("Checking person")
     if usertag != "":
-        tag = await bot.fetch_user(usertag[3:-1])
-        username = tag.name
-        userdiscrim = tag.discriminator
-        user = username + "#" + userdiscrim
+        tag = ctx.guild.get_member(int(usertag[3:-1]))
+        username = tag.display_name
+        user = tag.id
     else:
-        username = ctx.author.name
-        userdiscrim = ctx.author.discriminator
-        user = username + "#" + userdiscrim
+        user = ctx.author.id
+        username = ctx.author.display_name
     tz_stuff = userTzCheck(user)
     if usertag != "" and tz_stuff != False and tz_stuff[2] == "FALSE":
         await ctx.send("This user has his timezone hidden")
@@ -400,9 +398,7 @@ async def tzcheck(ctx, usertag: str = ""):
 @bot.command()
 async def tztoggle(ctx):
     """This command checks and updates the user timezone."""
-    username = ctx.author.name
-    userdiscrim = ctx.author.discriminator
-    user = username + "#" + userdiscrim
+    user = ctx.author.id
     tzupdate = userTzPrivacyToggle(user)
     await ctx.send(tzupdate)
 
@@ -445,10 +441,9 @@ async def los(ctx):
 @bot.command()
 async def tzupdate(ctx, usertimezone: str):
     """This command checks and updates the user timezone."""
-    username = ctx.author.name
-    userdiscrim = ctx.author.discriminator
-    user = username + "#" + userdiscrim
-    tzupdate = userTzUpdater(user, usertimezone)
+    username = ctx.author.display_name
+    userid = ctx.author.id
+    tzupdate = userTzUpdater(username, usertimezone, userid)
     await ctx.send(tzupdate)
 
 
