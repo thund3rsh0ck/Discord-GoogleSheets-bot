@@ -234,14 +234,14 @@ def read_quotes():
     return allValues
 
 
-def write_quote(quote):
+def write_quote(quote, authorid):
     worksheetAllValues = read_quotes()
     rowNumbs = len(worksheetAllValues)
     if len(worksheetAllValues[0]) == 0:
         latestRowNumb = rowNumbs
     else:
         latestRowNumb = rowNumbs + 1
-    gsQuotes.update_row(latestRowNumb, [quote])
+    gsQuotes.update_row(latestRowNumb, [quote, authorid])
     return latestRowNumb
 
 
@@ -264,7 +264,7 @@ async def on_ready():
 async def quoteadd(ctx, quote: str = ""):
     """This command adds quotes. Be sure to use quotation marks around quotes"""
     if quote != "":
-        quoteid = write_quote(quote)
+        quoteid = write_quote(quote, str(ctx.author.id))
         await ctx.send("Quote added at position **{}**  {}".format(quoteid, ctx.message.author.mention))
     else:
         await ctx.send("You didn't quote anything {}".format(ctx.message.author.mention))
@@ -286,33 +286,10 @@ async def quote(ctx, quoteid: str = ""):
         await ctx.send("You didn't quote anything {}".format(ctx.message.author.mention))
 
 
-@bot.command(hidden=True)
-@commands.has_role("Twitch Mods")
-async def gettzids(ctx):
-    timeWorksheetValues = gsUserTimezones.get_all_values()
-    for i in range(len(timeWorksheetValues)):
-        userid = ctx.guild.get_member_named(timeWorksheetValues[i][0])
-        if userid:
-            await ctx.send(str(userid) + " " + str(userid.id))
-
-@bot.command(hidden=True)
-@commands.has_role("Twitch Mods")
-async def renametz(ctx):
-    timeWorksheetValues = gsUserTimezones.get_all_values()
-    for i in range(len(timeWorksheetValues)):
-        if i>0:
-            userid = ctx.guild.get_member(int(timeWorksheetValues[i][3]))
-            if userid:
-                the_stuff = timeWorksheetValues[i]
-                the_stuff[0] = userid.display_name
-                gsUserTimezones.update_row(i + 1, the_stuff)
-
-
-
 @bot.command(pass_context=True)
 @commands.has_role("Twitch Mods")
 async def quoterem(ctx, quoteid: str = ""):
-    """This removes quotes. Enter the quote number"""
+    """This removes quotes. Enter the quote number (MODS ONLY)"""
     if quoteid == "0":
         await ctx.send("There is no quote in position **{}** {}".format(quoteid, ctx.message.author.mention))
     elif quoteid != "":
@@ -320,6 +297,24 @@ async def quoterem(ctx, quoteid: str = ""):
         if int(quoteid) - 1 < len(quotes):
             gsQuotes.delete_rows(int(quoteid), 1)
             await ctx.send("Quote number **{}** was removed".format(quoteid))
+        else:
+            await ctx.send("There is no quote in position **{}** {}".format(quoteid, ctx.message.author.mention))
+    else:
+        await ctx.send("You didn't quote anything {}".format(ctx.message.author.mention))
+
+@bot.command(pass_context=True)
+async def quotedel(ctx, quoteid: str = ""):
+    """This removes quotes. Enter the quote number (AUTHOR ONLY)"""
+    if quoteid == "0":
+        await ctx.send("There is no quote in position **{}** {}".format(quoteid, ctx.message.author.mention))
+    elif quoteid != "":
+        quotes = read_quotes()
+        if int(quoteid) - 1 < len(quotes):
+            if int(quotes[int(quoteid)-1][1]) == ctx.author.id:
+                gsQuotes.delete_rows(int(quoteid), 1)
+                await ctx.send("Quote number **{}** was removed".format(quoteid))
+            else:
+                await ctx.send("**You are not the author of this quote ** {}".format(ctx.message.author.mention))
         else:
             await ctx.send("There is no quote in position **{}** {}".format(quoteid, ctx.message.author.mention))
     else:
@@ -337,8 +332,9 @@ async def quotes(ctx):
         await ctx.send("There are no quotes yet {}".format(ctx.message.author.mention))
     else:
         for i in range(len(quotes)):
-            embed.add_field(name="Quote number: {}".format(
-                i + 1), value=quotes[i][0], inline=False)
+            author = ctx.guild.get_member(int(quotes[i][1]))
+            embed.add_field(name="Quote number: {}, Adeed by: {}".format(
+                str(i + 1), author.display_name), value=quotes[i][0], inline=False)
         await ctx.send(embed=embed)
 
 
