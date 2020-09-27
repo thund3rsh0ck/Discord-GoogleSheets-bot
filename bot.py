@@ -60,7 +60,6 @@ fh.setFormatter(fmt)
 logger.addHandler(fh)
 logger.addHandler(ch)
 
-
 # create bot
 bot = commands.Bot(command_prefix=prefix, pm_help=None,
                    case_insensitive=False)
@@ -164,9 +163,11 @@ def priceCheck(theEpoch):
 
 def has_admin_privilege():
     """Check that returns true if user has admin permissions"""
+
     async def predicate(ctx):
         return await (bot.is_owner(ctx.author) or
                       ctx.author.permissions_in(ctx.channel).administrator)
+
     return commands.check(predicate)
 
 
@@ -175,16 +176,16 @@ def userTzCheck(user):
     timeWorksheetValues = gsUserTimezones.get_all_values()
     user_tz = None
     for i in timeWorksheetValues:
-        if user == i[0]:
-            user_tz = i[1]
+        if str(user) == i[3]:
+            user_tz = i
     if user_tz == None:
         user_tz = False
     return user_tz
 
 
-def userTzUpdater(user, usertimezone):
+def userTzUpdater(user, usertimezone, userid):
     checkResponse = userTzCheck(user)
-    the_stuff = [user, usertimezone]
+    the_stuff = [user, usertimezone, True, str(userid)]
     # this gets all the cells in the Worksheet
     worksheetAllValues = gsUserTimezones.get_all_values()
     # this checks for all the elements in the list, since each row is a set of elements within the main list
@@ -206,13 +207,14 @@ def userTzUpdater(user, usertimezone):
         tzmessage3 = "Your user timezone is up to date"
         return tzmessage3
 
+
 def userTzPrivacyToggle(user):
     # this gets all the cells in the Worksheet
     the_stuff = None
     timeWorksheetValues = gsUserTimezones.get_all_values()
     user_row = None
     for i in range(len(timeWorksheetValues)):
-        if user == timeWorksheetValues[i][0]:
+        if str(user) == timeWorksheetValues[i][3]:
             user_row = i
             the_stuff = timeWorksheetValues[i]
     if user_row == None:
@@ -220,7 +222,7 @@ def userTzPrivacyToggle(user):
     if user_row != False:
         # this puts the information provided by the user, in the right cell
         the_stuff[2] = "FALSE" if the_stuff[2] == "TRUE" else "TRUE"
-        gsUserTimezones.update_row(user_row+1, the_stuff)
+        gsUserTimezones.update_row(user_row + 1, the_stuff)
         # This adds 1 more row, to make sure we dont run out of rows for information.
         return "Your timezone visibility has been set to " + ("visible" if the_stuff[2] == "TRUE" else "hidden")
     else:
@@ -229,15 +231,18 @@ def userTzPrivacyToggle(user):
 
 def read_quotes():
     allValues = gsQuotes.get_all_values()
-    return(allValues)
+    return allValues
 
 
-def write_quote(quote):
-    gsQuotes.link(syncToCloud=True)
+def write_quote(quote, authorid):
     worksheetAllValues = read_quotes()
     rowNumbs = len(worksheetAllValues)
-    latestRowNumb = rowNumbs + 1
-    gsPurchaseWorksheet.update_row(latestRowNumb, quote)
+    if len(worksheetAllValues[0]) == 0:
+        latestRowNumb = rowNumbs
+    else:
+        latestRowNumb = rowNumbs + 1
+    gsQuotes.update_row(latestRowNumb, [quote, authorid])
+    return latestRowNumb
 
 
 def errorReporting(errorReport):
@@ -257,35 +262,26 @@ async def on_ready():
 
 @bot.command(pass_context=True)
 async def quoteadd(ctx, quote: str = ""):
+    """This command adds quotes. Be sure to use quotation marks around quotes"""
     if quote != "":
-        with open("quotes.json", "r") as quote_read:
-            quotes = json.load(quote_read)
-        quoteid = len(quotes["quotes"])
-        quotejson = {
-            "id": quoteid,
-            "quote": quote
-        }
-        quotes["quotes"].append(quotejson)
-        with open("quotes.json", "w") as quote_write:
-            json.dump(quotes, quote_write)
-        await ctx.send("Quote added at position **" + str(quoteid) + "**  {}".format(ctx.message.author.mention))
+        quoteid = write_quote(quote, str(ctx.author.id))
+        await ctx.send("Quote added at position **{}**  {}".format(quoteid, ctx.message.author.mention))
     else:
         await ctx.send("You didn't quote anything {}".format(ctx.message.author.mention))
 
 
 @bot.command(pass_context=True)
 async def quote(ctx, quoteid: str = ""):
-    if quoteid != "":
-        with open("quotes.json", "r") as quote_read:
-            quotes = json.load(quote_read)
-        if int(quoteid) < len(quotes["quotes"]):
-            quote = quotes["quotes"][int(quoteid)]
-            if quote != None:
-                await ctx.send("Quote number "+quoteid + ": **" + str(quote["quote"]) + "**")
-            else:
-                await ctx.send("Quote number **"+quoteid + "** was removed")
+    """This lists a specific quote. Enter a Number and it shall return a quote"""
+    if quoteid == "0":
+        await ctx.send("There is no quote in position **{}** {}".format(quoteid, ctx.message.author.mention))
+    elif quoteid != "":
+        quotes = read_quotes()
+        if int(quoteid) - 1 < len(quotes):
+            quote = quotes[int(quoteid) - 1]
+            await ctx.send("Quote number {}: **{}**".format(quoteid, quote[0]))
         else:
-            await ctx.send("There is no quote in position **" + quoteid + "** {}".format(ctx.message.author.mention))
+            await ctx.send("There is no quote in position **{}** {}".format(quoteid, ctx.message.author.mention))
     else:
         await ctx.send("You didn't quote anything {}".format(ctx.message.author.mention))
 
@@ -293,31 +289,53 @@ async def quote(ctx, quoteid: str = ""):
 @bot.command(pass_context=True)
 @commands.has_role("Twitch Mods")
 async def quoterem(ctx, quoteid: str = ""):
-    if quoteid != "":
-        with open("quotes.json", "r") as quote_read:
-            quotes = json.load(quote_read)
-        if int(quoteid) < len(quotes["quotes"]):
-            quotes["quotes"][int(quoteid)]["quote"] = None
-            with open("quotes.json", "w") as quote_write:
-                json.dump(quotes, quote_write)
-            await ctx.send("Quote number **"+quoteid + "** was removed")
+    """This removes quotes. Enter the quote number (MODS ONLY)"""
+    if quoteid == "0":
+        await ctx.send("There is no quote in position **{}** {}".format(quoteid, ctx.message.author.mention))
+    elif quoteid != "":
+        quotes = read_quotes()
+        if int(quoteid) - 1 < len(quotes):
+            gsQuotes.delete_rows(int(quoteid), 1)
+            await ctx.send("Quote number **{}** was removed".format(quoteid))
         else:
-            await ctx.send("There is no quote in position **" + quoteid + "** {}".format(ctx.message.author.mention))
+            await ctx.send("There is no quote in position **{}** {}".format(quoteid, ctx.message.author.mention))
+    else:
+        await ctx.send("You didn't quote anything {}".format(ctx.message.author.mention))
+
+@bot.command(pass_context=True)
+async def quotedel(ctx, quoteid: str = ""):
+    """This removes quotes. Enter the quote number (AUTHOR ONLY)"""
+    if quoteid == "0":
+        await ctx.send("There is no quote in position **{}** {}".format(quoteid, ctx.message.author.mention))
+    elif quoteid != "":
+        quotes = read_quotes()
+        if int(quoteid) - 1 < len(quotes):
+            if int(quotes[int(quoteid)-1][1]) == ctx.author.id:
+                gsQuotes.delete_rows(int(quoteid), 1)
+                await ctx.send("Quote number **{}** was removed".format(quoteid))
+            else:
+                await ctx.send("**You are not the author of this quote ** {}".format(ctx.message.author.mention))
+        else:
+            await ctx.send("There is no quote in position **{}** {}".format(quoteid, ctx.message.author.mention))
     else:
         await ctx.send("You didn't quote anything {}".format(ctx.message.author.mention))
 
 
 @bot.command(pass_context=True)
 async def quotes(ctx):
-    with open("quotes.json", "r") as quote_read:
-        quotes = json.load(quote_read)
+    """This list all the quotes"""
+    quotes = read_quotes()
     message = ""
     embed = discord.Embed(title="Quotes", description=" {}".format(
         ctx.message.author.mention), color=0x00ff00)
-    for quote in quotes["quotes"]:
-        embed.add_field(name="Quote number: " +
-                        str(quote["id"]), value=quote["quote"], inline=False)
-    await ctx.send(embed=embed)
+    if len(quotes[0]) == 0:
+        await ctx.send("There are no quotes yet {}".format(ctx.message.author.mention))
+    else:
+        for i in range(len(quotes)):
+            author = ctx.guild.get_member(int(quotes[i][1]))
+            embed.add_field(name="Quote number: {}, Adeed by: {}".format(
+                str(i + 1), author.display_name), value=quotes[i][0], inline=False)
+        await ctx.send(embed=embed)
 
 
 @bot.command()
@@ -352,17 +370,15 @@ async def tzcheck(ctx, usertag: str = ""):
     """This function checks and lists your timezone"""
     await ctx.send("Checking person")
     if usertag != "":
-        tag = await bot.fetch_user(usertag[3:-1])
-        username = tag.name
-        userdiscrim = tag.discriminator
-        user = username + "#" + userdiscrim
+        tag = ctx.guild.get_member(int(usertag[3:-1]))
+        username = tag.display_name
+        user = tag.id
     else:
-        username = ctx.author.name
-        userdiscrim = ctx.author.discriminator
-        user = username + "#" + userdiscrim
+        user = ctx.author.id
+        username = ctx.author.display_name
     tz_stuff = userTzCheck(user)
     if usertag != "" and tz_stuff != False and tz_stuff[2] == "FALSE":
-        await ctx.send("This user has his timezone hidden")
+        await ctx.send("This user has their timezone hidden")
     else:
         user_usertimezone = None
         if tz_stuff == False:
@@ -370,20 +386,17 @@ async def tzcheck(ctx, usertag: str = ""):
         else:
             user_usertimezone = tz_stuff[1]
             if usertag == "":
-                await ctx.send("Your Current user timezone: " + user_usertimezone)
+                await ctx.send("Your current user timezone: " + user_usertimezone)
             else:
-                await ctx.send(username + "'s' timezone is: " + user_usertimezone)
+                await ctx.send(username + "'s timezone is: " + user_usertimezone)
 
 
 @bot.command()
 async def tztoggle(ctx):
     """This command checks and updates the user timezone."""
-    username = ctx.author.name
-    userdiscrim = ctx.author.discriminator
-    user = username + "#" + userdiscrim
+    user = ctx.author.id
     tzupdate = userTzPrivacyToggle(user)
     await ctx.send(tzupdate)
-
 
 
 @bot.command()
@@ -424,10 +437,9 @@ async def los(ctx):
 @bot.command()
 async def tzupdate(ctx, usertimezone: str):
     """This command checks and updates the user timezone."""
-    username = ctx.author.name
-    userdiscrim = ctx.author.discriminator
-    user = username + "#" + userdiscrim
-    tzupdate = userTzUpdater(user, usertimezone)
+    username = ctx.author.display_name
+    userid = ctx.author.id
+    tzupdate = userTzUpdater(username, usertimezone, userid)
     await ctx.send(tzupdate)
 
 

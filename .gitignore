@@ -4,6 +4,8 @@ client_secret.json
 root*
 .vscode
 workspace*
+sheets.googleapis.com-python.json
+
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
