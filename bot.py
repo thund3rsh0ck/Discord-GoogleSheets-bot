@@ -321,6 +321,10 @@ async def quotedel(ctx, quoteid: str = ""):
         await ctx.send("You didn't quote anything {}".format(ctx.message.author.mention))
 
 
+@bot.command()
+async def nan(ctx):
+    await ctx.send("Nan is pretty Yucca")
+
 @bot.command(pass_context=True)
 async def quotes(ctx):
     """This list all the quotes"""
