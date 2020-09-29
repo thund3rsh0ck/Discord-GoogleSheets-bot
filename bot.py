@@ -422,7 +422,7 @@ async def yucca(ctx, user: str = ""):
 
 @bot.command()
 async def nan(ctx):
-    await ctx.send("Nan is Pretty Yucca")
+    await ctx.send("Nan = Queen Yucca")
 
 
 @bot.command()
