@@ -64,6 +64,14 @@ logger.addHandler(ch)
 bot = commands.Bot(command_prefix=prefix, pm_help=None,
                    case_insensitive=False)
 
+# override on_message so we can remove commands that aren't commands
+@bot.event
+async def on_message(message):
+    msg = message.content.strip()
+    # if this is just multiple exclamation points, do nothing
+    if set(msg) == {'!'}:
+        return
+    await bot.process_commands(message)
 
 def sheets_authorize():
     """This authorizes google sheets and lets you access the spreadsheet"""
