@@ -65,12 +65,17 @@ bot = commands.Bot(command_prefix=prefix, pm_help=None,
                    case_insensitive=False)
 
 # override on_message so we can remove commands that aren't commands
+caseSenstiveCommands = set([!"openThePodBayDoors", "!salesSpreadsheet", "!whyDoesThisExist"])
+
 @bot.event
 async def on_message(message):
     msg = message.content.strip()
     # if this is just multiple exclamation points, do nothing
     if set(msg) == {'!'}:
         return
+    cmd_name, _, rest = msg.partition(" ")
+    if cmd_name.startswith("!") and cmd_name not in caseSensitiveCommands:
+        message.content = f"{cmd_name.lower()} {rest}"
     await bot.process_commands(message)
 
 def sheets_authorize():
