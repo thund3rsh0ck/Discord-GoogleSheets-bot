@@ -65,7 +65,7 @@ bot = commands.Bot(command_prefix=prefix, pm_help=None,
                    case_insensitive=False)
 
 # override on_message so we can remove commands that aren't commands
-caseSenstiveCommands = set([!"openThePodBayDoors", "!salesSpreadsheet", "!whyDoesThisExist"])
+caseSenstiveCommands = set(["!openThePodBayDoors", "!salesSpreadsheet", "!whyDoesThisExist"])
 
 @bot.event
 async def on_message(message):
