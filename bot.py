@@ -66,7 +66,6 @@ bot = commands.Bot(command_prefix=prefix, pm_help=None,
 
 @bot.event
 async def on_message(message):
-    print(message)
     msg = message.content.strip()
     # if this is just multiple exclamation points, do nothing
     if set(msg) == {'!'}:
