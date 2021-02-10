@@ -61,9 +61,9 @@ logger.addHandler(fh)
 logger.addHandler(ch)
 
 # create bot
-bot = commands.Bot(command_prefix=prefix, pm_help=None,
+intents = discord.Intents(messages=True,members = True, guilds=True)
+bot = commands.Bot(command_prefix=prefix,intents=intents, pm_help=None,
         case_insensitive=True)
-
 @bot.event
 async def on_message(message):
     msg = message.content.strip()
