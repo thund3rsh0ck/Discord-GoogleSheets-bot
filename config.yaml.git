@@ -1,0 +1,11 @@
+# rename this to config.yaml when you have this locally
+# Put Your bots token here
+token: "00000000000000000000000.00000000.000000000000000000"
+
+prefix: '~'  # put prefix here
+
+# put bot invite link here
+link: 'https://discordapp.com/oauth2/authorize?client_id=000000000000000000&scope=bot&permissions=0000000'
+
+spreadsheetId: 00000-00000000000000000000000000 # This is the ID in the url, after spreadsheet/d/
+sheetName: Sheet1 # This is the name of the spreadsheet at the bottom of the page 
