@@ -9,12 +9,12 @@ autopep8 = "*"
 
 [packages]
 oauth2client = "*"
-requests = "~=2.23.0"
-pygsheets = "~=1.1.4"
-pyyaml = "~=5.3.1"
+requests = "*"
+pygsheets = "*"
+pyyaml = "*"
 discord-py = "*"
 pytz = "*"
 pandas = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
