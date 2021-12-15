@@ -4,8 +4,10 @@ This is a bot that integrations google sheets with discord API. It was intended 
 # Requirements
 
 1. Python 3.6
-2. Discord.py from here: https://github.com/Rapptz/discord.py
-3. gspread from here: https://github.com/burnash/gspread
+2. Discord.py from here: https://github.com/Rapptz/discord.py - install in the folder using python3 setup.py install
+3. gspread from here: https://github.com/burnash/gspread - install in the folder using python3 setup.py install
+4. oauth2client - `pip3 install --upgrade oauth2client`
+5. If you get a error about pip3 above you may need to run something like `apt-get install -y python3-pip` on linux
 
 # If You have Github Desktop use this
 ```
@@ -23,7 +25,7 @@ Then Open Up The File Named ReadMe.txt
 5. Select the Perms You want the bot to have and copy the invite link and paste it into the "link" in the "Config.py" File
 6. Now Invite the bot to Your Server and Make a role Named "bot" (or whatever you want)
 7. Get your google sheets json creds with this guide: https://gspread.readthedocs.io/en/latest/oauth2.html, plug that file into the bot.py as needed.
-8. Now Double click the "bot.py" and The bot should work
+8. Now Double click the "bot.py" and The bot should work or run `python3 bot.py` on linux
 
 # Issues
 
