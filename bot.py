@@ -30,12 +30,9 @@ for i in range(500):
 
 				
 			@client.command()
-			async def ping():
+			async def ping(ctx):
 				'''See if The Bot is Working'''
-				pingtime = time.time()
-				pingms = await client.say("Pinging...")
-				ping = time.time() - pingtime
-				await client.edit_message(pingms, ":ping_pong:  time is `%.01f seconds`" % ping)
+				await ctx.send(f'Pong! In {round(client.latency * 1000)}ms')
 				
 			@client.command()
 			async def participation():
