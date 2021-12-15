@@ -18,7 +18,7 @@ Then Open Up The File Named ReadMe.txt
 
 1. Download The Zip File If you dont have Github Desktop
 2. unzip.
-3. Go To [Here](https://discordapp.com/developers/applications/me/) To Get Your Bots ID, Toke - you may need to go the documentation tab the the application tab as that site is a bit buggy.
+3. Go To [Here](https://discordapp.com/developers/applications/me/) To Get Your Bots ID, Token - you may need to go the documentation tab the the application tab as that site is a bit buggy. You will have to go under the "Bot" submenu and convert your bot to have life to get these values.
 4. Next to get your Bots Invite link Go [Here](https://discordapi.com/permissions.html) and Get your Bots id and paste it into the "Client Id Here"
 5. Select the Perms You want the bot to have and copy the invite link and paste it into the "link" in the "Config.py" File
 6. Now Invite the bot to Your Server and Make a role Named "bot" (or whatever you want)
