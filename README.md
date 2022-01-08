@@ -3,11 +3,12 @@ This is a bot that integrations google sheets with discord API. It was intended 
 
 # Requirements
 
-1. Python 3.6
+1. Python 3.8
 2. Discord.py from here: https://github.com/Rapptz/discord.py - install in the folder using python3 setup.py install
 3. gspread from here: https://github.com/burnash/gspread - install in the folder using python3 setup.py install
 4. oauth2client - `pip3 install --upgrade oauth2client`
 5. If you get a error about pip3 above you may need to run something like `apt-get install -y python3-pip` on linux
+6. If you get an error about "Literals" in the "Typing" package upgrade python to 3.8 or higher
 
 # If You have Github Desktop use this
 ```
